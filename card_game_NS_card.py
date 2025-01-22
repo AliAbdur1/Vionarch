@@ -1,3 +1,4 @@
+# "import asyncio" import here?
 import os
 import math
 import pygame
@@ -55,14 +56,14 @@ GREEN = (42, 197, 81)
 BRIGHTGREEN = (0, 255, 0)
 
 # music v
-pygame.mixer.music.load('music/9convert.com - Hades II  The Silver Sisters.mp3')  # Adjust to your file path
+pygame.mixer.music.load('music/9convert.com - Hades II The Silver Sisters.ogg')  # Adjust to your file path
 pygame.mixer.music.play(-1)  # Loop indefinitely
 pygame.mixer.music.set_volume(0.5)
 
 # sounds
-card_flip_sound = pygame.mixer.Sound('music/soundFX/card_color_change_sound.mp3')
-selection_is_made_sound = pygame.mixer.Sound('music/soundFX/select_something.mp3')
-new_game_sound = pygame.mixer.Sound('music/soundFX/new_game.mp3')
+card_flip_sound = pygame.mixer.Sound('music/soundFX/card_color_change_sound.ogg')
+selection_is_made_sound = pygame.mixer.Sound('music/soundFX/select_something.ogg')
+new_game_sound = pygame.mixer.Sound('music/soundFX/new_game.ogg')
 # sounds
 # music ^
 
@@ -878,6 +879,8 @@ def is_board_full():
 show_title_screen()
 show_team_selection_screen()
 
+# where i think the async function should go?
+# async def main():
 while True:
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -1051,5 +1054,7 @@ while True:
 
     # Refresh the display
     pygame.display.update()
+    # "await asyncio.sleep(0)  # Very important, and keep it 0" maybe where this should go?
     FPS_CLOCK.tick(FPS)
+    # asyncio.run(main()) .. and mybe finally here?
 
