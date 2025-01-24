@@ -701,10 +701,14 @@ def show_image_carousel_screen():
     # Define button dimensions
     left_arrow = pygame.Rect(50, WINDOW_HEIGHT // 2 - 25, 50, 50)
     right_arrow = pygame.Rect(WINDOW_WIDTH - 100, WINDOW_HEIGHT // 2 - 25, 50, 50)
-    next_button = pygame.Rect(WINDOW_WIDTH // 2 + 350, WINDOW_HEIGHT - 100, 150, 50) # change '350' to move position of the back to title btn
+    # Load the "Back to Title" button image
+    next_button_image = pygame.image.load('images/backgrounds/game_asset_buttonholder.png')
+    next_button_image = pygame.transform.scale(next_button_image, (225, 125))  # Scale the image to the button size
+    next_button_rect = next_button_image.get_rect(topleft=(WINDOW_WIDTH // 2 + 350, WINDOW_HEIGHT - 150)) # position of button
 
     font = pygame.font.Font('fonts/adon/Adon Black.otf', 13)
-    next_text = font.render("Back to Title", True, BLACK)
+    back_btn_font = pygame.font.Font('fonts/adon/Adon Black.otf', 25)
+    next_text = back_btn_font.render("BACK", True, WHITE)
 
     description_image = pygame.image.load('images/backgrounds/game_asset_textholder.png')  # Load the background image for the description
     description_image = pygame.transform.scale(description_image, (rect_width, 250))  # Scale to fit the description area
@@ -721,7 +725,7 @@ def show_image_carousel_screen():
                     current_image_index = (current_image_index - 1) % len(images)
                 elif right_arrow.collidepoint(event.pos):
                     current_image_index = (current_image_index + 1) % len(images)
-                elif next_button.collidepoint(event.pos):
+                elif next_button_rect.collidepoint(event.pos):
                     fade_out(WINDOW_WIDTH, WINDOW_HEIGHT)
                     show_title_screen()
                     return
@@ -749,15 +753,84 @@ def show_image_carousel_screen():
         pygame.draw.rect(DISPLAYSURF, WHITE, right_arrow)
         pygame.draw.polygon(DISPLAYSURF, BLACK, [(WINDOW_WIDTH - 60, WINDOW_HEIGHT // 2), (WINDOW_WIDTH - 90, WINDOW_HEIGHT // 2 - 20), (WINDOW_WIDTH - 90, WINDOW_HEIGHT // 2 + 20)])
 
-        # Draw "Next" button
-        pygame.draw.rect(DISPLAYSURF, WHITE, next_button)
-        text_rect = next_text.get_rect(center=next_button.center)
-        DISPLAYSURF.blit(next_text, text_rect)
+        # Draw "Back to Title" button image
+        DISPLAYSURF.blit(next_button_image, next_button_rect.topleft)
+
+        # Draw "Back to Title" text on top of the button
+        next_text_rect = next_text.get_rect(center=next_button_rect.center)
+        DISPLAYSURF.blit(next_text, next_text_rect)
 
         pygame.display.update()
         FPS_CLOCK.tick(FPS)
 
+def gallery_mode():
+    "List to stor images for gallery"
+    pictures = [
+        pygame.image.load('images/card/green_bat.png'),
+        pygame.image.load('images/card/Lion_hunter.png'),
+        pygame.image.load('images/card/red_cultist.png'),
+        pygame.image.load('images/card/IMG_0946.png')
+        
+    ]
 
+    # Scale images to fit the rectangle area
+    rect_width, rect_height = 500, 700  # Dimensions of the display rectangle
+    pictures = [pygame.transform.scale(pic, (rect_width, rect_height)) for pic in pictures]
+
+    current_picture_index = 0
+
+    # Define display rectangle position
+    rect_x = (WINDOW_WIDTH - rect_width) // 2
+    rect_y = (WINDOW_HEIGHT - rect_height) // 2 - 50
+
+    # Define button dimensions
+    left_arrow = pygame.Rect(50, WINDOW_HEIGHT // 2 - 25, 50, 50)
+    right_arrow = pygame.Rect(WINDOW_WIDTH - 100, WINDOW_HEIGHT // 2 - 25, 50, 50)
+    # Load the "Back to Title" button image
+    back_button_image = pygame.image.load('images/backgrounds/game_asset_buttonholder.png')
+    back_button_image = pygame.transform.scale(back_button_image, (225, 125))  # Scale the image to the button size
+    back_button_rect = back_button_image.get_rect(topleft=(WINDOW_WIDTH // 2 + 350, WINDOW_HEIGHT - 150)) # position of button
+
+    font = pygame.font.Font('fonts/adon/Adon Black.otf', 13)
+    back_btn_font = pygame.font.Font('fonts/adon/Adon Black.otf', 25)
+    back_text = back_btn_font.render("BACK", True, WHITE)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == MOUSEBUTTONDOWN:
+                if left_arrow.collidepoint(event.pos):
+                    current_picture_index = (current_picture_index - 1) % len(pictures)
+                elif right_arrow.collidepoint(event.pos):
+                    current_picture_index = (current_picture_index + 1) % len(pictures)
+                elif back_button_rect.collidepoint(event.pos):
+                    fade_out(WINDOW_WIDTH, WINDOW_HEIGHT)
+                    show_title_screen()
+                    return
+                
+    # Draw the background and current image
+        DISPLAYSURF.blit(BG_Title_GO_IMAGE, (0,0)) 
+        pygame.draw.rect(DISPLAYSURF, WHITE, (rect_x, rect_y, rect_width, rect_height), 2)  # Draw border for the image area
+        DISPLAYSURF.blit(pictures[current_picture_index], (rect_x, rect_y))
+
+        # Draw arrows
+        pygame.draw.rect(DISPLAYSURF, WHITE, left_arrow)
+        pygame.draw.polygon(DISPLAYSURF, BLACK, [(60, WINDOW_HEIGHT // 2), (90, WINDOW_HEIGHT // 2 - 20), (90, WINDOW_HEIGHT // 2 + 20)])
+
+        pygame.draw.rect(DISPLAYSURF, WHITE, right_arrow)
+        pygame.draw.polygon(DISPLAYSURF, BLACK, [(WINDOW_WIDTH - 60, WINDOW_HEIGHT // 2), (WINDOW_WIDTH - 90, WINDOW_HEIGHT // 2 - 20), (WINDOW_WIDTH - 90, WINDOW_HEIGHT // 2 + 20)])
+
+        # Draw "Back to Title" button image
+        DISPLAYSURF.blit(back_button_image, back_button_rect.topleft)
+
+        # Draw "Back to Title" text on top of the button
+        back_text_rect = back_text.get_rect(center=back_button_rect.center)
+        DISPLAYSURF.blit(back_text, back_text_rect)
+
+        pygame.display.update()
+        FPS_CLOCK.tick(FPS)
 # Function to display the title screen
 def show_title_screen():
     DISPLAYSURF.blit(BG_Title_GO_IMAGE, (0,0))
@@ -771,14 +844,26 @@ def show_title_screen():
     text_rect = text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 50))
     DISPLAYSURF.blit(text, text_rect)
 
-    # Button for image carousel
-    carousel_button = pygame.Rect(WINDOW_WIDTH // 2 - 250, WINDOW_HEIGHT - 150, 500, 50)
-    pygame.draw.rect(DISPLAYSURF, WHITE, carousel_button)
-    carousel_font = pygame.font.Font('fonts/stencil_gothic/Gothic Stencil - Dker.ttf', 54)
-    carousel_text = carousel_font.render('How to Play', True, BLACK)
-    carousel_text_rect = carousel_text.get_rect(center=carousel_button.center)
+    button_image = pygame.image.load('images/backgrounds/game_asset_buttonholder_forMain.png')
+    button_image = pygame.transform.scale(button_image, (230, 80))  # Scale the button image
+
+    # Button for image carousel v
+    carousel_button_rect = button_image.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT - 150))
+    DISPLAYSURF.blit(button_image, carousel_button_rect.topleft)
+    carousel_font = pygame.font.Font('fonts/aesthico/Aesthico(Demo)-Regular.ttf', 22)
+    carousel_text = carousel_font.render('Tutorial', True, WHITE)
+    carousel_text_rect = carousel_text.get_rect(center=carousel_button_rect.center)
     DISPLAYSURF.blit(carousel_text, carousel_text_rect)
-    # Button for image carousel
+    # Button for image carousel ^
+
+    # Button for Gallery mode v
+    gallery_button_rect = button_image.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT - 240))
+    DISPLAYSURF.blit(button_image, gallery_button_rect.topleft)
+    gallery_font = pygame.font.Font('fonts/aesthico/Aesthico(Demo)-Regular.ttf', 22)
+    gallery_text = gallery_font.render('Gallery', True, WHITE)
+    gallery_text_rect = gallery_text.get_rect(center=gallery_button_rect.center)
+    DISPLAYSURF.blit(gallery_text, gallery_text_rect)
+    # Button for Gallery mode ^
     
 
     pygame.display.update()
@@ -790,11 +875,18 @@ def show_title_screen():
                 pygame.quit()
                 sys.exit()
             elif event.type == MOUSEBUTTONDOWN:
-                if carousel_button.collidepoint(event.pos):
+                if carousel_button_rect.collidepoint(event.pos):
                     fade_out(WINDOW_WIDTH, WINDOW_HEIGHT)
                     show_image_carousel_screen()
                     waiting = False
                     return
+                # this elif loop needed to be insdie the one above
+                elif event.type == MOUSEBUTTONDOWN:
+                    if gallery_button_rect.collidepoint(event.pos):
+                        fade_out(WINDOW_WIDTH, WINDOW_HEIGHT)
+                        gallery_mode()
+                        waiting = False
+                        return
             elif event.type == KEYDOWN:
                 fade_out(WINDOW_WIDTH, WINDOW_HEIGHT)
                 # show_team_selection_screen() <--- this was making the team selection game show twice
