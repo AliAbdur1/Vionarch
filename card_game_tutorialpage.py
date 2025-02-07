@@ -134,7 +134,7 @@ def fade_in(width, height):
 
 TOTAL_CARDS = [
     ([1, 2, 3, 4], "Cat", "Just a fuckin cat"),
-    ([4, 3, 2, 1], "Lestolen", "Lion Hunter prince of the Zoraznor plaines"),
+    ([7, 4, 5, 4], "Lestolen", "Lion Hunter prince of the Zoraznor plaines"),
     ([5, 5, 5, 5], "Deer", "a damn deer"),
     ([6, 6, 6, 6], "Pig", "will be bacon soon"),
     ([2, 3, 4, 5], "Dog", "Is a good boy"),
@@ -147,7 +147,7 @@ TOTAL_CARDS = [
     ([1, 1, 1, 1],"Heron", "lives in rivers and is tall"),
     ([2, 2, 2, 2], "Bull", "Has horns and is angry"), 
     ([3, 3, 3, 3], "Sir Guir", "knight on horseback.. looks cool"), 
-    ([4, 4, 4, 4], "Knight", "has a sword and fights monsters"), 
+    ([6, 5, 8, 8], "Hecterra", "bearer of the acuresd visage"), 
     ([5, 5, 5, 5], "Koala", "is cute"),
     ([6, 6, 6, 6], "Leopard", "Death with spots on it"), 
     ([7, 7, 8, 7], "Lion", "Had better watch out for lestolon"), 
@@ -160,7 +160,7 @@ TOTAL_CARDS = [
     ([1, 1, 1, 9], "Fukt Up", "place holder illustration"), 
     ([9, 1, 1, 1], "Wolf's head", "crest of house durren"), 
     ([2, 2, 2, 8], "Blue Goo", "Species of water kapa with a habit of drowning tressure seekers"), 
-    ([8, 2, 2, 2], "Red Hood", "Devout ssurvant of the crimson flame"),
+    ([8, 4, 6, 7], "Red Hood", "Devout ssurvant of the crimson flame"),
     ([3, 3, 3, 7], "wolf", "spicy doggo"), 
     ([7, 3, 3, 3], "Green bat", "Emits a piercing scream")
 ]
@@ -182,7 +182,7 @@ def load_images():
         12: pygame.image.load('images/card/heron.png'),
         13: pygame.image.load('images/card/bull.png'),
         14: pygame.image.load('images/card/knight_on_horse.png'),
-        15: pygame.image.load('images/card/knight.png'),
+        15: pygame.image.load('images/card/Hecterra.png'),
         16: pygame.image.load('images/card/koala.png'),
         17: pygame.image.load('images/card/leopard.png'),
         18: pygame.image.load('images/card/lion.png'),
@@ -769,12 +769,13 @@ def gallery_mode():
         pygame.image.load('images/card/green_bat.png'),
         pygame.image.load('images/card/Lion_hunter.png'),
         pygame.image.load('images/card/red_cultist.png'),
-        pygame.image.load('images/card/IMG_0946.png')
+        pygame.image.load('images/card/IMG_0946.png'),
+        pygame.image.load('images/card/Hecterra.png')
         
     ]
 
     # Scale images to fit the rectangle area
-    rect_width, rect_height = 500, 700  # Dimensions of the display rectangle
+    rect_width, rect_height = 650, 950  # Dimensions of the display rectangle
     pictures = [pygame.transform.scale(pic, (rect_width, rect_height)) for pic in pictures]
 
     current_picture_index = 0
@@ -918,6 +919,17 @@ def show_team_selection_screen():
     same_mode_rect = same_mode_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 100))
     plus_mode_text = font.render('Plus Mode: OFF', True, BLACK)
     plus_mode_rect = plus_mode_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 150))
+
+    # back to title from team selection v
+    button_image = pygame.image.load('images/backgrounds/game_asset_buttonholder_forMain.png')
+    button_image = pygame.transform.scale(button_image, (230, 80))  # Scale the button image
+    back_to_title_button_rect = button_image.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT - 150))
+    DISPLAYSURF.blit(button_image, back_to_title_button_rect.topleft)
+    back_to_title_font = pygame.font.Font('fonts/aesthico/Aesthico(Demo)-Regular.ttf', 22)
+    back_to_title_text = back_to_title_font.render('Back to Title', True, WHITE)
+    back_to_title_text_rect = back_to_title_text.get_rect(center=back_to_title_button_rect.center)
+    DISPLAYSURF.blit(back_to_title_text, back_to_title_text_rect)
+    # back to title from team selection ^
     
     # Blit the initial texts to the display surface
     DISPLAYSURF.blit(red_text, red_rect)
@@ -957,7 +969,7 @@ def show_team_selection_screen():
                     same_mode_text = font.render(f'Same Mode: {"ON" if same_mode_enabled else "OFF"}', True, BLACK)
                     # Display or hide description
                     if same_mode_enabled:
-                        same_mode_description = "In Same Mode, teams follow identical rules."
+                        same_mode_description = "In Same Mode, cards with matching numbers defeat adjacent cards."
                     else:
                         same_mode_description = ""
                 
@@ -970,6 +982,13 @@ def show_team_selection_screen():
                         plus_mode_description = "In Plus Mode, cards with matching sums defeat adjacent cards."
                     else:
                         plus_mode_description = ""
+
+                # Back to Title button
+                elif back_to_title_button_rect.collidepoint(event.pos):
+                    fade_out(WINDOW_WIDTH, WINDOW_HEIGHT)
+                    show_title_screen()
+                    # return <-- this was causeing the team select screen to be skipped after key press to go to team select
+
                     
                     
                 # Redraw everything after an update
@@ -978,6 +997,9 @@ def show_team_selection_screen():
                 DISPLAYSURF.blit(blue_text, blue_rect)
                 DISPLAYSURF.blit(same_mode_text, same_mode_rect)
                 DISPLAYSURF.blit(plus_mode_text, plus_mode_rect)
+                # makes sure that back to title image and btn are on screen after clicked v
+                DISPLAYSURF.blit(button_image, back_to_title_button_rect.topleft)
+                DISPLAYSURF.blit(back_to_title_text, back_to_title_text_rect)
 
                 # Blit mode descriptions only if they are non-empty
                 if same_mode_description:
@@ -989,6 +1011,8 @@ def show_team_selection_screen():
                     plus_mode_description_text = mode_info_font.render(plus_mode_description, True, BLACK)
                     plus_mode_description_rect = plus_mode_description_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 180))
                     DISPLAYSURF.blit(plus_mode_description_text, plus_mode_description_rect)
+
+            
 
                 pygame.display.update()
 
